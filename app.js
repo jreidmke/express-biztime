@@ -6,6 +6,9 @@ const express = require("express");
 const app = express();
 const ExpressError = require("./expressError")
 
+const cRoutes = require('./routes/companies');
+app.use('/companies', cRoutes );
+
 app.use(express.json());
 
 
