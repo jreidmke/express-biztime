@@ -16,7 +16,7 @@ CREATE TABLE invoices (
     paid boolean DEFAULT false NOT NULL,
     add_date date DEFAULT CURRENT_DATE NOT NULL,
     paid_date date,
-    CONSTRAINT invoices_amt_check CHECK ((amt > (0)::double precision))
+    CONSTRAINT invoices_amt_check CHECK ((amt > (0)::double precision)) --this checks to make sure amt > 0; 
 );
 
 INSERT INTO companies
