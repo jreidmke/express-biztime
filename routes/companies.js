@@ -35,11 +35,11 @@ router.post('/', async(req, res, next) => {
     }
 })
 
-router.put('/', async(req, res, next) => {
+router.put('/:code', async(req, res, next) => {
     try {
         const {name, description} = req.body;
-        const code = slugify(name);
-        const results = await db.query(`UPDATE companies SET name=$1, description=$2WHERE code=$3 RETURNING *`, [name, description, code]);
+        const code = slugify(name).toLowerCase();
+        const results = await db.query(`UPDATE companies SET name=$1, description=$2 WHERE code=$3 RETURNING *`, [name, description, req.params.code]);
         return res.json(results.rows[0]);
     } catch (error) {
         next(error);

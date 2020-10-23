@@ -44,19 +44,17 @@ describe("Post /companies", () => {
     })
 })
 
-describe("Patch /companies/:code", () => {
-    test("Patches company", async () => {
-        const response = await request(app).patch(`/companies/${testCo.code}`).send({code: 'candy', name: 'Candy Co', description: 'We make the best candy'});
-        console.log(response.body);
+describe("put /companies/:code", () => {
+    test("puts company", async () => {
+        const response = await request(app).put(`/companies/${testCo.code}`).send({name: 'Candy Co', description: 'We make the best candy'});
         expect(response.statusCode).toBe(200);
-        expect(response.body).toEqual({code: 'candy', name: 'Candy Co', description: 'We make the best candy'});
+        expect(response.body).toEqual({code: 'pizza-zone', name: 'Candy Co', description: 'We make the best candy'});
     })
 })
 
 describe("DELTE /companies/:id", () => {
     test("Deletes company", async () => {
         const response = await request(app).delete(`/companies/${testCo.code}`);
-        console.log(response.body);
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual([ {"?column?": "Company Deleted"} ]);
     })
