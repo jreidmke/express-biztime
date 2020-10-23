@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require('../db');
 const ExpressError = require("../expressError");
+const slugify = require('slugify');
 
 router.get('/', async(req, res, next) => {
     try {
@@ -16,7 +17,7 @@ router.get('/:code', async(req, res, next) => {
     try {
         const results = await db.query(`SELECT * FROM companies WHERE code=$1`, [req.params.code]);
         if(results.rows.length === 0) {
-            throw new ExpressError(`Can't find user with id ${req.params.id}`, 404)
+            throw new ExpressError(`Can't find company with code ${req.params.code}`, 404)
         }
         return res.json(results.rows);
     } catch (error) {
@@ -34,10 +35,11 @@ router.post('/', async(req, res, next) => {
     }
 })
 
-router.patch('/:code', async(req, res, next) => {
+router.put('/', async(req, res, next) => {
     try {
-        const {name, description, code} = req.body;
-        const results = await db.query(`UPDATE companies SET name=$1, description=$2, code=$4 WHERE code=$3 RETURNING *`, [name, description, req.params.code, code]);
+        const {name, description} = req.body;
+        const code = slugify(name);
+        const results = await db.query(`UPDATE companies SET name=$1, description=$2WHERE code=$3 RETURNING *`, [name, description, code]);
         return res.json(results.rows[0]);
     } catch (error) {
         next(error);
