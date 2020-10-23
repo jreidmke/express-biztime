@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const db = require('../db');
+const now = new Date().toLocaleDateString('en-CA');
 
 router.get('/', async(req, res, next) => {
     try {
@@ -33,8 +34,21 @@ router.post('/', async(req, res, next) => {
 
 router.put('/:id', async(req, res, next) => {
     try {
-        const { amt } = req.body;
-        const results = await db.query(`UPDATE invoices SET amt=$1 WHERE id=$2 RETURNING *`, [amt, req.params.id]);
+        const { amt, paid } = req.body;
+        const paidData = (await db.query(`SELECT paid, paid_date FROM invoices WHERE id=$1`, [req.params.id])).rows[0];
+        const isPaid = paidData["paid"];
+        const currDate = paidData["paid_date"];
+        console.log(now)
+        let payDate;
+        if(req.body.paid && !isPaid) {
+            payDate = now;
+        } else if(isPaid && !req.body.paid) {
+            payDate = null;
+        } else {
+            payDate = currDate;
+        }
+        console.log(payDate);
+        const results = await db.query(`UPDATE invoices SET amt=$1, paid=$3, paid_date=$4 WHERE id=$2 RETURNING *`, [amt, req.params.id, paid, payDate]);
         return res.json(results.rows);
     } catch (error) {
         next(error);
